@@ -3,16 +3,16 @@
  */
 package org.waarp.ftp.client.transaction;
 
+import org.waarp.ftp.client.FtpClient;
+
 import java.io.File;
 import java.util.Date;
 
-import org.waarp.ftp.client.FtpClient;
-
 /**
  * FTP Thread used to check multiple FTP clients in parallel with the test scenario
- * 
+ *
  * @author frederic
- * 
+ *
  */
 public class FtpClientThread implements Runnable {
     private String id = null;
@@ -52,8 +52,8 @@ public class FtpClientThread implements Runnable {
      * @param delay
      */
     public FtpClientThread(String id, String server, int port, String username,
-            String passwd, String account, String localFilename, int nb,
-            int type, int delay, int isSsl) {
+                           String passwd, String account, String localFilename, int nb,
+                           int type, int delay, int isSsl) {
         this.id = id;
         this.server = server;
         this.port = port;
@@ -71,7 +71,8 @@ public class FtpClientThread implements Runnable {
 
     public void run() {
         Ftp4JClientTransactionTest client = new Ftp4JClientTransactionTest(this.server,
-                this.port, this.username, this.passwd, this.account, this.isSsl);
+                                                                           this.port, this.username, this.passwd,
+                                                                           this.account, this.isSsl);
         // Thread.yield();
         // System.err.println(id+" connect");
         if (!client.connect()) {
@@ -105,9 +106,9 @@ public class FtpClientThread implements Runnable {
                     for (int i = 0; i < this.numberIteration; i++) {
                         // System.err.println(id+" transfer store "+i);
                         if (!client.transferFile(this.localFilename,
-                                this.remoteFilename, true)) {
+                                                 this.remoteFilename, true)) {
                             System.err.println((new Date()) +
-                                    " Cant store file passive mode " + this.id);
+                                               " Cant store file passive mode " + this.id);
                             FtpClient.numberKO.incrementAndGet();
                             return;
                         } else {
@@ -126,9 +127,9 @@ public class FtpClientThread implements Runnable {
                     for (int i = 0; i < this.numberIteration; i++) {
                         // System.err.println(id+" transfer retr "+i);
                         if (!client.transferFile(null,
-                                this.remoteFilename, false)) {
+                                                 this.remoteFilename, false)) {
                             System.err.println((new Date()) +
-                                    " Cant retrieve file passive mode " + this.id);
+                                               " Cant retrieve file passive mode " + this.id);
                             FtpClient.numberKO.incrementAndGet();
                             return;
                         } else {
@@ -152,9 +153,9 @@ public class FtpClientThread implements Runnable {
                     for (int i = 0; i < this.numberIteration; i++) {
                         // System.err.println(id+" transfer store "+i);
                         if (!client.transferFile(this.localFilename,
-                                this.remoteFilename, true)) {
+                                                 this.remoteFilename, true)) {
                             System.err.println((new Date()) +
-                                    " Cant store file active mode " + this.id);
+                                               " Cant store file active mode " + this.id);
                             FtpClient.numberKO.incrementAndGet();
                             return;
                         } else {
@@ -173,9 +174,9 @@ public class FtpClientThread implements Runnable {
                     for (int i = 0; i < this.numberIteration; i++) {
                         // System.err.println(id+" transfer retr "+i);
                         if (!client.transferFile(null,
-                                this.remoteFilename, false)) {
+                                                 this.remoteFilename, false)) {
                             System.err.println((new Date()) +
-                                    " Cant retrieve file active mode " + this.id);
+                                               " Cant retrieve file active mode " + this.id);
                             FtpClient.numberKO.incrementAndGet();
                             return;
                         } else {

@@ -3,21 +3,21 @@
  */
 package org.waarp.ftp.client;
 
+import org.waarp.common.logging.WaarpLoggerFactory;
+import org.waarp.common.logging.WaarpSlf4JLoggerFactory;
+import org.waarp.ftp.client.transaction.Ftp4JClientTransactionTest;
+import org.waarp.ftp.client.transaction.FtpClientThread;
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.waarp.common.logging.WaarpLoggerFactory;
-import org.waarp.common.logging.WaarpSlf4JLoggerFactory;
-import org.waarp.ftp.client.transaction.FtpClientThread;
-import org.waarp.ftp.client.transaction.Ftp4JClientTransactionTest;
-
 /**
  * Simple test example using predefined scenario (Note: this uses the configuration example for user shutdown command)
- * 
+ *
  * @author frederic
- * 
+ *
  */
 public class FtpClient {
     public static AtomicLong numberOK = new AtomicLong(0);
@@ -41,7 +41,7 @@ public class FtpClient {
         int numberIteration = 1;
         if (args.length < 8) {
             System.err.println("Usage: " + FtpClient.class.getSimpleName() +
-                    " server port user pwd acct localfilename nbThread nbIter");
+                               " server port user pwd acct localfilename nbThread nbIter");
             System.exit(1);
         }
         server = args[0];
@@ -72,7 +72,7 @@ public class FtpClient {
         }
         // initiate Directories
         Ftp4JClientTransactionTest client = new Ftp4JClientTransactionTest(server,
-                port, username, passwd, account, isSSL);
+                                                                           port, username, passwd, account, isSSL);
         if (!client.connect()) {
             System.err.println("Cant connect");
             FtpClient.numberKO.incrementAndGet();
@@ -100,15 +100,16 @@ public class FtpClient {
         long date1 = System.currentTimeMillis();
         for (int i = 0; i < numberThread; i++) {
             executorService.execute(new FtpClientThread("T" + i, server, port,
-                    username, passwd, account, localFilename, numberIteration,
-                    type, delay, isSSL));
+                                                        username, passwd, account, localFilename, numberIteration,
+                                                        type, delay, isSSL));
             if (delay > 0) {
                 try {
                     long newdel = ((delay / 3) / 10) * 10;
-                    if (newdel == 0)
+                    if (newdel == 0) {
                         Thread.yield();
-                    else
+                    } else {
                         Thread.sleep(newdel);
+                    }
                 } catch (InterruptedException e) {
                 }
             } else {
@@ -144,16 +145,16 @@ public class FtpClient {
         }
 
         System.out.println(localFilename + " " + numberThread + " " + numberIteration + " " + type +
-                " Real: " + (date2 - date1) + " OK: " +
-                numberOK.get() + " KO: " + numberKO.get() + " Trf/s: " +
-                (numberOK.get() * 1000 / (date2 - date1)));
+                           " Real: " + (date2 - date1) + " OK: " +
+                           numberOK.get() + " KO: " + numberKO.get() + " Trf/s: " +
+                           (numberOK.get() * 1000 / (date2 - date1)));
         if (shutdown) {
             try {
                 Thread.sleep(500);
             } catch (InterruptedException e) {
             }
             client = new Ftp4JClientTransactionTest(server,
-                    port, "fredo", "fred1", "a", isSSL);
+                                                    port, "fredo", "fred1", "a", isSSL);
             if (!client.connect()) {
                 System.err.println("Cant connect");
                 FtpClient.numberKO.incrementAndGet();

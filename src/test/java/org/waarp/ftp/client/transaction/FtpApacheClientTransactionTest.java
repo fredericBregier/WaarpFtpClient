@@ -1,21 +1,19 @@
 package org.waarp.ftp.client.transaction;
 
+import org.waarp.ftp.client.NullOutputStream;
+import org.waarp.ftp.client.WaarpFtpClient;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.waarp.ftp.client.NullOutputStream;
-import org.waarp.ftp.client.WaarpFtpClient;
-
 /**
  * FTP Apache Commons-Net client transaction test
- * 
+ *
  * @author frederic
- * 
  */
 public class FtpApacheClientTransactionTest extends WaarpFtpClient {
     /**
-     * 
      * @param server
      * @param port
      * @param username
@@ -23,16 +21,17 @@ public class FtpApacheClientTransactionTest extends WaarpFtpClient {
      * @param account
      */
     public FtpApacheClientTransactionTest(String server, int port, String username,
-            String passwd, String account, int isSsl) {
+                                          String passwd, String account, int isSsl) {
         super(server, port, username, passwd, account, false, isSsl, 0, 10000);
     }
 
     /**
      * Ask to transfer a file
-     * 
+     *
      * @param local
      * @param remote
      * @param store
+     *
      * @return True if the file is correctly transfered
      */
     public boolean transferFile(String local, String remote, boolean store) {
@@ -69,7 +68,7 @@ public class FtpApacheClientTransactionTest extends WaarpFtpClient {
             } else {
                 output = new NullOutputStream();
                 status = this.ftpClient.retrieveFile(remote,
-                        output);
+                                                     output);
                 output.flush();
                 output.close();
                 if (!this.ftpClient.completePendingCommand()) {
@@ -79,16 +78,18 @@ public class FtpApacheClientTransactionTest extends WaarpFtpClient {
                 return status;
             }
         } catch (IOException e) {
-            if (output != null)
+            if (output != null) {
                 try {
                     output.close();
                 } catch (IOException e1) {
                 }
-            if (fileInputStream != null)
+            }
+            if (fileInputStream != null) {
                 try {
                     fileInputStream.close();
                 } catch (IOException e1) {
                 }
+            }
             e.printStackTrace();
             return false;
         }

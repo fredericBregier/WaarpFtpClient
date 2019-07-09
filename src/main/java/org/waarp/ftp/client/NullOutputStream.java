@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.waarp.ftp.client;
 
@@ -8,15 +8,15 @@ import java.io.OutputStream;
 
 /**
  * Simple /dev/null output stream
- * 
+ *
  * @author frederic
- * 
+ *
  */
 public class NullOutputStream extends OutputStream {
 
     /**
-	 * 
-	 */
+     *
+     */
     public NullOutputStream() {
     }
 

@@ -1,17 +1,16 @@
 /**
  * This file is part of Waarp Project.
- * 
- * Copyright 2009, Frederic Bregier, and individual contributors by the @author tags. See the
- * COPYRIGHT.txt in the distribution for a full listing of individual contributors.
- * 
- * All Waarp Project is free software: you can redistribute it and/or modify it under the terms of
- * the GNU General Public License as published by the Free Software Foundation, either version 3 of
- * the License, or (at your option) any later version.
- * 
- * Waarp is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
- * the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- * 
+ * <p>
+ * Copyright 2009, Frederic Bregier, and individual contributors by the @author tags. See the COPYRIGHT.txt in the
+ * distribution for a full listing of individual contributors.
+ * <p>
+ * All Waarp Project is free software: you can redistribute it and/or modify it under the terms of the GNU General
+ * Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
+ * <p>
+ * Waarp is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * <p>
  * You should have received a copy of the GNU General Public License along with Waarp . If not, see
  * <http://www.gnu.org/licenses/>.
  */
@@ -27,7 +26,13 @@ import it.sauronsoftware.ftp4j.FTPFile;
 import it.sauronsoftware.ftp4j.FTPIllegalReplyException;
 import it.sauronsoftware.ftp4j.FTPListParseException;
 import it.sauronsoftware.ftp4j.FTPReply;
+import org.waarp.common.logging.WaarpLogger;
+import org.waarp.common.logging.WaarpLoggerFactory;
 
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 import java.io.File;
 import java.io.IOException;
 import java.net.SocketException;
@@ -36,26 +41,19 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
 
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSocketFactory;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
-
-import org.waarp.common.logging.WaarpLogger;
-import org.waarp.common.logging.WaarpLoggerFactory;
-
 /**
  * FTP client using FTP4J model (working in all modes)
- * 
+ *
  * @author "Frederic Bregier"
- * 
+ *
  */
 public class WaarpFtp4jClient {
     /**
      * Internal Logger
      */
     private static final WaarpLogger logger = WaarpLoggerFactory.getLogger(WaarpFtp4jClient.class);
-
+    protected FTPClient ftpClient = null;
+    protected String result = null;
     String server = null;
     int port = 21;
     String user = null;
@@ -65,8 +63,6 @@ public class WaarpFtp4jClient {
     int keepalive;
     boolean isPassive = false;
     int ssl = 0; // -1 native, 1 auth
-    protected FTPClient ftpClient = null;
-    protected String result = null;
     private boolean binaryTransfer = true;
 
     /**
@@ -80,8 +76,8 @@ public class WaarpFtp4jClient {
      * @param timeout
      */
     public WaarpFtp4jClient(String server, int port,
-            String user, String pwd, String acct, boolean isPassive, int ssl, int keepalive,
-            int timeout) {
+                            String user, String pwd, String acct, boolean isPassive, int ssl, int keepalive,
+                            int timeout) {
         this.server = server;
         this.port = port;
         this.user = user;
@@ -94,17 +90,19 @@ public class WaarpFtp4jClient {
         this.ftpClient = new FTPClient();
         if (this.ssl != 0) {
             // implicit or explicit
-            TrustManager[] trustManager = new TrustManager[] { new X509TrustManager() {
-                public X509Certificate[] getAcceptedIssuers() {
-                    return null;
-                }
+            TrustManager[] trustManager = new TrustManager[] {
+                    new X509TrustManager() {
+                        public X509Certificate[] getAcceptedIssuers() {
+                            return null;
+                        }
 
-                public void checkClientTrusted(X509Certificate[] certs, String authType) {
-                }
+                        public void checkClientTrusted(X509Certificate[] certs, String authType) {
+                        }
 
-                public void checkServerTrusted(X509Certificate[] certs, String authType) {
-                }
-            } };
+                        public void checkServerTrusted(X509Certificate[] certs, String authType) {
+                        }
+                    }
+            };
             SSLContext sslContext = null;
             try {
                 sslContext = SSLContext.getInstance("SSL");
@@ -153,7 +151,7 @@ public class WaarpFtp4jClient {
 
     /**
      * Try to connect to the server and goes with the authentication
-     * 
+     *
      * @return True if connected and authenticated, else False
      */
     public boolean connect() {
@@ -275,7 +273,7 @@ public class WaarpFtp4jClient {
 
     /**
      * Create a new directory
-     * 
+     *
      * @param newDir
      * @return True if created
      */
@@ -305,7 +303,7 @@ public class WaarpFtp4jClient {
 
     /**
      * Change remote directory
-     * 
+     *
      * @param newDir
      * @return True if the change is OK
      */
@@ -335,7 +333,7 @@ public class WaarpFtp4jClient {
 
     /**
      * Change the FileType of Transfer (Binary true, ASCII false)
-     * 
+     *
      * @param binaryTransfer1
      * @return True if the change is OK
      */
@@ -358,7 +356,7 @@ public class WaarpFtp4jClient {
 
     /**
      * Change to passive (true) or active (false) mode
-     * 
+     *
      * @param passive
      */
     public void changeMode(boolean passive) {
@@ -368,7 +366,7 @@ public class WaarpFtp4jClient {
 
     /**
      * Ask to transfer a file
-     * 
+     *
      * @param local
      *            local filepath (full path)
      * @param remote
@@ -387,11 +385,11 @@ public class WaarpFtp4jClient {
                 try {
                     if (getStoreOrAppend == 1) {
                         this.ftpClient.upload(from, new DataTimeOutListener(ftpClient, timeout,
-                                "STOR", local));
+                                                                            "STOR", local));
                     } else {
                         // append
                         this.ftpClient.append(from, new DataTimeOutListener(ftpClient, timeout,
-                                "APPE", local));
+                                                                            "APPE", local));
                     }
                     result = null;
                 } catch (IllegalStateException e) {
@@ -419,7 +417,7 @@ public class WaarpFtp4jClient {
                     logger.debug("Will DLD nullStream: " + remote);
                     try {
                         this.ftpClient.download(remote, nullOutputStream, 0,
-                                new DataTimeOutListener(ftpClient, timeout, "RETR", remote));
+                                                new DataTimeOutListener(ftpClient, timeout, "RETR", remote));
                         result = null;
                     } catch (IllegalStateException e) {
                         logger.error(result, e);
@@ -442,7 +440,7 @@ public class WaarpFtp4jClient {
                     File to = new File(local);
                     try {
                         this.ftpClient.download(remote, to, new DataTimeOutListener(ftpClient,
-                                timeout, "RETR", local));
+                                                                                    timeout, "RETR", local));
                         result = null;
                     } catch (IllegalStateException e) {
                         logger.error(result, e);
@@ -471,7 +469,7 @@ public class WaarpFtp4jClient {
     }
 
     /**
-     * 
+     *
      * @return the list of Files as given by FTP
      */
     public String[] listFiles() {
@@ -516,7 +514,7 @@ public class WaarpFtp4jClient {
     }
 
     /**
-     * 
+     *
      * @param feature
      * @return True if the given feature is listed
      */
@@ -546,7 +544,7 @@ public class WaarpFtp4jClient {
     }
 
     /**
-     * 
+     *
      * @param params
      * @return the string lines result for the command params
      */
@@ -576,7 +574,7 @@ public class WaarpFtp4jClient {
     }
 
     /**
-     * 
+     *
      * @param params
      *            command without SITE in front
      * @return the string lines result for the SITE command params
