@@ -30,7 +30,6 @@ import java.util.TimerTask;
  * Timeout listener for Data connection for FTP4J model
  *
  * @author "Frederic Bregier"
- *
  */
 public class DataTimeOutListener implements FTPDataTransferListener {
     /**

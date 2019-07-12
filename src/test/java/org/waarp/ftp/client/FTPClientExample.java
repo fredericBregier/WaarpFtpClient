@@ -38,11 +38,11 @@ import java.io.PrintWriter;
 
 /**
  * This is the FTPClient example from Apache Commons-Net<br>
- *
- * This is an example program demonstrating how to use the FTPClient class. This program connects to
- * an FTP server and retrieves the specified file. If the -s flag is used, it stores the local file
- * at the FTP server. Just so you can see what's happening, all reply strings are printed. If the -b
- * flag is used, a binary transfer is assumed (default is ASCII). See below for further options.
+ * <p>
+ * This is an example program demonstrating how to use the FTPClient class. This program connects to an FTP server and
+ * retrieves the specified file. If the -s flag is used, it stores the local file at the FTP server. Just so you can see
+ * what's happening, all reply strings are printed. If the -b flag is used, a binary transfer is assumed (default is
+ * ASCII). See below for further options.
  */
 public final class FTPClientExample {
 

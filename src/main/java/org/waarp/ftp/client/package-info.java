@@ -17,6 +17,8 @@
  * Main class for the FTP Client for R66.
  *
  * @author "Frederic Bregier"
+ * @apiviz.landmark Main class for the FTP Client for R66.
+ * @author "Frederic Bregier"
  * @apiviz.landmark
  */
 /**

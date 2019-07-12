@@ -45,7 +45,6 @@ import java.security.cert.X509Certificate;
  * FTP client using FTP4J model (working in all modes)
  *
  * @author "Frederic Bregier"
- *
  */
 public class WaarpFtp4jClient {
     /**
@@ -275,6 +274,7 @@ public class WaarpFtp4jClient {
      * Create a new directory
      *
      * @param newDir
+     *
      * @return True if created
      */
     public boolean makeDir(String newDir) {
@@ -305,6 +305,7 @@ public class WaarpFtp4jClient {
      * Change remote directory
      *
      * @param newDir
+     *
      * @return True if the change is OK
      */
     public boolean changeDir(String newDir) {
@@ -335,6 +336,7 @@ public class WaarpFtp4jClient {
      * Change the FileType of Transfer (Binary true, ASCII false)
      *
      * @param binaryTransfer1
+     *
      * @return True if the change is OK
      */
     public boolean changeFileType(boolean binaryTransfer1) {
@@ -367,12 +369,10 @@ public class WaarpFtp4jClient {
     /**
      * Ask to transfer a file
      *
-     * @param local
-     *            local filepath (full path)
-     * @param remote
-     *            filename (basename)
-     * @param getStoreOrAppend
-     *            -1 = get, 1 = store, 2 = append
+     * @param local local filepath (full path)
+     * @param remote filename (basename)
+     * @param getStoreOrAppend -1 = get, 1 = store, 2 = append
+     *
      * @return True if the file is correctly transfered
      */
     public boolean transferFile(String local, String remote, int getStoreOrAppend) {
@@ -469,7 +469,6 @@ public class WaarpFtp4jClient {
     }
 
     /**
-     *
      * @return the list of Files as given by FTP
      */
     public String[] listFiles() {
@@ -514,8 +513,8 @@ public class WaarpFtp4jClient {
     }
 
     /**
-     *
      * @param feature
+     *
      * @return True if the given feature is listed
      */
     public boolean featureEnabled(String feature) {
@@ -544,8 +543,8 @@ public class WaarpFtp4jClient {
     }
 
     /**
-     *
      * @param params
+     *
      * @return the string lines result for the command params
      */
     public String[] executeCommand(String params) {
@@ -574,9 +573,8 @@ public class WaarpFtp4jClient {
     }
 
     /**
+     * @param params command without SITE in front
      *
-     * @param params
-     *            command without SITE in front
      * @return the string lines result for the SITE command params
      */
     public String[] executeSiteCommand(String params) {

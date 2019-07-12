@@ -37,7 +37,6 @@ import java.net.SocketException;
  * FTP Client using Apache Commons net FTP client (not working using FTPS or FTPSE)
  *
  * @author "Frederic Bregier"
- *
  */
 public class WaarpFtpClient {
     /**
@@ -211,6 +210,7 @@ public class WaarpFtpClient {
      * Create a new directory
      *
      * @param newDir
+     *
      * @return True if created
      */
     public boolean makeDir(String newDir) {
@@ -228,6 +228,7 @@ public class WaarpFtpClient {
      * Change remote directory
      *
      * @param newDir
+     *
      * @return True if the change is OK
      */
     public boolean changeDir(String newDir) {
@@ -245,6 +246,7 @@ public class WaarpFtpClient {
      * Change the FileType of Transfer (Binary true, ASCII false)
      *
      * @param binaryTransfer1
+     *
      * @return True if the change is OK
      */
     public boolean changeFileType(boolean binaryTransfer1) {
@@ -280,12 +282,10 @@ public class WaarpFtpClient {
     /**
      * Ask to transfer a file
      *
-     * @param local
-     *            local filepath (limited to path if get, else full path)
-     * @param remote
-     *            filename
-     * @param getStoreOrAppend
-     *            -1 = get, 1 = store, 2 = append
+     * @param local local filepath (limited to path if get, else full path)
+     * @param remote filename
+     * @param getStoreOrAppend -1 = get, 1 = store, 2 = append
+     *
      * @return True if the file is correctly transfered
      */
     public boolean transferFile(String local, String remote, int getStoreOrAppend) {
@@ -353,7 +353,6 @@ public class WaarpFtpClient {
     }
 
     /**
-     *
      * @return the list of files as returned by the FTP command
      */
     public String[] listFiles() {
@@ -374,8 +373,8 @@ public class WaarpFtpClient {
     }
 
     /**
-     *
      * @param feature
+     *
      * @return True if the feature is listed
      */
     public boolean featureEnabled(String feature) {
@@ -394,8 +393,8 @@ public class WaarpFtpClient {
     }
 
     /**
-     *
      * @param params
+     *
      * @return the string lines returned by the command params
      */
     public String[] executeCommand(String params) {
@@ -423,8 +422,8 @@ public class WaarpFtpClient {
     }
 
     /**
-     *
      * @param params
+     *
      * @return the string lines returned by the SITE command params
      */
     public String[] executeSiteCommand(String params) {
