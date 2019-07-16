@@ -23,6 +23,7 @@ package org.waarp.ftp.client.transaction;
 import org.waarp.ftp.client.NullOutputStream;
 import org.waarp.ftp.client.WaarpFtpClient;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -45,6 +46,8 @@ public class FtpApacheClientTransactionTest extends WaarpFtpClient {
                                         String passwd, String account,
                                         int isSsl) {
     super(server, port, username, passwd, account, false, isSsl, 0, 10000);
+    File dir = new File("/tmp/GGFTP/" + username + "/" + account);
+    dir.mkdirs();
   }
 
   /**
@@ -62,18 +65,15 @@ public class FtpApacheClientTransactionTest extends WaarpFtpClient {
     FileInputStream fileInputStream = null;
     try {
       if (store) {
-        fileInputStream = new FileInputStream(local);
-        status = this.ftpClient.storeFile(remote, fileInputStream);
-        fileInputStream.close();
-        fileInputStream = null;
+        status = super.transferFile(local, remote, 1);
         if (!status) {
           System.err.println("Cannot finalize store like operation");
           return false;
         }
-        if (!this.ftpClient.completePendingCommand()) {
-          System.err.println("Cannot finalize store like operation");
-          return false;
-        }
+        /*
+         * if (!this.ftpClient.completePendingCommand()) {
+         * System.err.println("Cannot finalize store like operation"); return false; }
+         */
         String[] results = this.executeSiteCommand("XCRC " + remote);
         for (String string : results) {
           System.err.println("XCRC: " + string);
@@ -86,6 +86,10 @@ public class FtpApacheClientTransactionTest extends WaarpFtpClient {
         for (String string : results) {
           System.err.println("XSHA1: " + string);
         }
+        results = this.listFiles();
+        for (String string : results) {
+          System.err.println("LIST: " + string);
+        }
         return true;
       } else {
         output = new NullOutputStream();
@@ -93,10 +97,6 @@ public class FtpApacheClientTransactionTest extends WaarpFtpClient {
                                              output);
         output.flush();
         output.close();
-        if (!this.ftpClient.completePendingCommand()) {
-          System.err.println("Cannot finalize store like operation");
-          return false;
-        }
         return status;
       }
     } catch (IOException e) {
@@ -112,6 +112,15 @@ public class FtpApacheClientTransactionTest extends WaarpFtpClient {
         } catch (IOException e1) {
         }
       }
+      e.printStackTrace();
+      return false;
+    }
+  }
+
+  public boolean deleteFile(String remote) {
+    try {
+      return this.ftpClient.deleteFile(remote);
+    } catch (IOException e) {
       e.printStackTrace();
       return false;
     }

@@ -320,11 +320,6 @@ public class WaarpFtpClient {
           logger.error(result);
           return false;
         }
-        if (!this.ftpClient.completePendingCommand()) {
-          result = "Cannot finalize store like operation";
-          logger.error(result);
-          return false;
-        }
         return true;
       } else {
         output = new FileOutputStream(new File(local, remote));
@@ -333,11 +328,6 @@ public class WaarpFtpClient {
         output.close();
         output = null;
         if (!status) {
-          result = "Cannot finalize retrieve like operation";
-          logger.error(result);
-          return false;
-        }
-        if (!this.ftpClient.completePendingCommand()) {
           result = "Cannot finalize retrieve like operation";
           logger.error(result);
           return false;

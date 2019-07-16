@@ -31,47 +31,54 @@ import org.apache.commons.net.ftp.FTPSClient;
 import org.apache.commons.net.io.CopyStreamEvent;
 import org.apache.commons.net.io.CopyStreamListener;
 import org.apache.commons.net.util.TrustManagerUtils;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.waarp.common.logging.WaarpLogLevel;
+import org.waarp.common.logging.WaarpLogger;
+import org.waarp.common.logging.WaarpLoggerFactory;
+import org.waarp.common.logging.WaarpSlf4JLoggerFactory;
+import org.waarp.common.utility.DetectionUtils;
+import org.waarp.ftp.FtpServer;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 
+import static org.junit.Assert.*;
+
 /**
  * This is the FTPClient example from Apache Commons-Net<br>
  * <p>
  * This is an example program demonstrating how to use the FTPClient class. This
- * program connects to an FTP server and
- * retrieves the specified file. If the -s flag is used, it stores the local
- * file at the FTP server. Just so you can see
- * what's happening, all reply strings are printed. If the -b flag is used, a
- * binary transfer is assumed (default is
- * ASCII). See below for further options.
+ * program connects to an FTP
+ * server and retrieves the specified file. If the -s flag is used, it stores
+ * the local file at the FTP
+ * server. Just so you can see what's happening, all reply strings are printed.
+ * If the -b flag is used, a
+ * binary transfer is assumed (default is ASCII). See below for further
+ * options.
  */
-public final class FTPClientExample {
-
+public final class FTPClientExampleTest {
   public static final String USAGE =
       "Usage: ftp [options] <hostname> <username> <password> <account> [<remote file> [<local file>]]\n"
       +
       "\nDefault behavior is to download a file and use ASCII transfer mode.\n"
-      +
-      "\t-a - use local active mode (default is local passive)\n"
-      +
+      + "\t-a - use local active mode (default is local passive)\n" +
       "\t-b - use binary transfer mode\n"
       +
       "\t-c cmd - issue arbitrary command (remote is used as a parameter if provided) \n"
       +
       "\t-d - list directory details using MLSD (remote is used as the pathname if provided)\n"
-      +
-      "\t-e - use EPSV with IPv4 (default false)\n"
-      +
-      "\t-f - issue FEAT command (remote and local files are ignored)\n"
-      +
-      "\t-h - list hidden files (applies to -l and -n only)\n"
-      +
-      "\t-k secs - use keep-alive timer (setControlKeepAliveTimeout)\n"
+      + "\t-e - use EPSV with IPv4 (default false)\n"
+      + "\t-f - issue FEAT command (remote and local files are ignored)\n"
+      + "\t-h - list hidden files (applies to -l and -n only)\n"
+      + "\t-k secs - use keep-alive timer (setControlKeepAliveTimeout)\n"
       +
       "\t-l - list files using LIST (remote is used as the pathname if provided)\n"
       +
@@ -80,24 +87,28 @@ public final class FTPClientExample {
       "\t-n - list file names using NLST (remote is used as the pathname if provided)\n"
       +
       "\t-p true|false|protocol[,true|false] - use FTPSClient with the specified protocol and/or isImplicit setting\n"
-      +
-      "\t-s - store file on server (upload)\n"
+      + "\t-s - store file on server (upload)\n"
       +
       "\t-t - list file details using MLST (remote is used as the pathname if provided)\n"
       +
       "\t-w msec - wait time for keep-alive reply (setControlKeepAliveReplyTimeout)\n"
       +
       "\t-T  all|valid|none - use one of the built-in TrustManager implementations (none = JVM default)\n"
-      +
-      "\t-PrH server[:port] - HTTP Proxy host and optional port[80] \n" +
-      "\t-PrU user - HTTP Proxy server username\n" +
-      "\t-PrP password - HTTP Proxy server password\n" +
-      "\t-# - add hash display during transfers\n";
+      + "\t-PrH server[:port] - HTTP Proxy host and optional port[80] \n"
+      + "\t-PrU user - HTTP Proxy server username\n" +
+      "\t-PrP password - HTTP Proxy server password\n"
+      + "\t-# - add hash display during transfers\n";
+  /**
+   * Internal Logger
+   */
+  private static final WaarpLogger
+      logger = WaarpLoggerFactory.getLogger(FTPClientExampleTest.class);
+  private static boolean stop = false;
 
   public static final void main(String[] args) {
     boolean storeFile = false, binaryTransfer = false, error = false,
-        listFiles = false, listNames = false, hidden =
-        false;
+        listFiles = false, listNames = false,
+        hidden = false;
     boolean localActive = false, useEpsvWithIPv4 = false, feat = false,
         printHash = false;
     boolean mlst = false, mlsd = false;
@@ -175,7 +186,8 @@ public final class FTPClientExample {
     if (remain < minParams) // server, user, pass, remote, local [protocol]
     {
       System.err.println(USAGE);
-      System.exit(1);
+      DetectionUtils.SystemExit(1);
+      return;
     }
 
     String server = args[base++];
@@ -264,8 +276,8 @@ public final class FTPClientExample {
       } else {
         ftp.connect(server);
       }
-      System.out.println("Connected to " + server + " on "
-                         + (port > 0? port : ftp.getDefaultPort()));
+      System.out.println("Connected to " + server + " on " +
+                         (port > 0? port : ftp.getDefaultPort()));
 
       // After connection attempt, you should check the reply code to verify
       // success.
@@ -274,7 +286,8 @@ public final class FTPClientExample {
       if (!FTPReply.isPositiveCompletion(reply)) {
         ftp.disconnect();
         System.err.println("FTP server refused connection.");
-        System.exit(1);
+        DetectionUtils.SystemExit(1);
+        return;
       }
     } catch (IOException e) {
       if (ftp.getDataConnectionMode() ==
@@ -287,7 +300,8 @@ public final class FTPClientExample {
       }
       System.err.println("Could not connect to server.");
       e.printStackTrace();
-      System.exit(1);
+      DetectionUtils.SystemExit(1);
+      return;
     }
 
     __main:
@@ -432,7 +446,7 @@ public final class FTPClientExample {
       }
     }
 
-    System.exit(error? 1 : 0);
+    DetectionUtils.SystemExit(error? 1 : 0);
   } // end main
 
   private static CopyStreamListener createListener() {
@@ -441,8 +455,7 @@ public final class FTPClientExample {
 
       public void bytesTransferred(CopyStreamEvent event) {
         bytesTransferred(event.getTotalBytesTransferred(),
-                         event.getBytesTransferred(),
-                         event.getStreamSize());
+                         event.getBytesTransferred(), event.getStreamSize());
       }
 
       public void bytesTransferred(long totalBytesTransferred,
@@ -454,5 +467,237 @@ public final class FTPClientExample {
         megsTotal = megs;
       }
     };
+  }
+
+  @BeforeClass
+  public static void startServer() {
+    WaarpLoggerFactory
+        .setDefaultFactory(new WaarpSlf4JLoggerFactory(WaarpLogLevel.WARN));
+    DetectionUtils.setJunit(true);
+    File file = new File("/tmp/GGFTP/fredo/a");
+    file.mkdirs();
+    logger.warn("Will start server");
+    FtpServer.startFtpServer("config2.xml");
+  }
+
+  @AfterClass
+  public static void stopServer() {
+    logger.warn("Will stop server");
+    //FtpServer.stopFtpServer();
+  }
+
+  @Test
+  public void testFtpApacheClientActive() throws IOException {
+    File localFilename = new File("/tmp/ftpfile.bin");
+    FileWriter fileWriterBig = new FileWriter(localFilename);
+    for (int i = 0; i < 100; i++) {
+      fileWriterBig.write("0123456789");
+    }
+    fileWriterBig.flush();
+    fileWriterBig.close();
+    logger.warn("Active");
+    launchFtpClient("127.0.0.1", 2022, "fredo", "fred1", "a", true,
+                    localFilename.getAbsolutePath(), localFilename.getName());
+    logger.warn("End Active");
+    try {
+      Thread.sleep(1000);
+    } catch (InterruptedException e) {
+      // ignore
+    }
+  }
+
+  public static void launchFtpClient(String server, int port, String username,
+                                     String password, String account,
+                                     boolean localActive, String local,
+                                     String remote) {
+    boolean mustCallProtP = false;
+    boolean binaryTransfer = true, error = false;
+    boolean useEpsvWithIPv4 = false;
+    boolean lenient = false;
+    final FTPClient ftp;
+    ftp = new FTPClient();
+
+    ftp.setCopyStreamListener(createListener());
+    ftp.setControlKeepAliveTimeout(30000);
+    ftp.setControlKeepAliveReplyTimeout(30000);
+    ftp.setListHiddenFiles(true);
+    // suppress login details
+    ftp.addProtocolCommandListener(
+        new PrintCommandListener(new PrintWriter(System.out), true));
+
+    try {
+      int reply;
+      if (port > 0) {
+        ftp.connect(server, port);
+      } else {
+        ftp.connect(server);
+      }
+      System.out.println("Connected to " + server + " on " +
+                         (port > 0? port : ftp.getDefaultPort()));
+
+      // After connection attempt, you should check the reply code to verify
+      // success.
+      reply = ftp.getReplyCode();
+
+      if (!FTPReply.isPositiveCompletion(reply)) {
+        ftp.disconnect();
+        System.err.println("FTP server refused connection.");
+        assertFalse("Can't connect", true);
+        return;
+      }
+    } catch (IOException e) {
+      if (ftp.getDataConnectionMode() ==
+          FTPClient.ACTIVE_LOCAL_DATA_CONNECTION_MODE) {
+        try {
+          ftp.disconnect();
+        } catch (IOException f) {
+          // do nothing
+        }
+      }
+      System.err.println("Could not connect to server.");
+      e.printStackTrace();
+      assertFalse("Can't connect", true);
+      return;
+    }
+
+    __main:
+    try {
+      if (account == null) {
+        if (!ftp.login(username, password)) {
+          ftp.logout();
+          error = true;
+          break __main;
+        }
+      } else {
+        if (!ftp.login(username, password, account)) {
+          ftp.logout();
+          error = true;
+          break __main;
+        }
+      }
+      System.out.println("Remote system is " + ftp.getSystemType());
+
+      if (binaryTransfer) {
+        ftp.setFileType(FTP.BINARY_FILE_TYPE);
+      }
+
+      // Use passive mode as default because most of us are
+      // behind firewalls these days.
+      if (localActive) {
+        ftp.enterLocalActiveMode();
+      } else {
+        ftp.enterLocalPassiveMode();
+      }
+
+      ftp.setUseEPSVwithIPv4(useEpsvWithIPv4);
+
+      if (mustCallProtP) {
+        ((FTPSClient) ftp).execPBSZ(0);
+        ((FTPSClient) ftp).execPROT("P");
+      }
+
+      InputStream input;
+
+      input = new FileInputStream(local);
+
+      if (!ftp.storeFile(remote, input)) {
+        error = true;
+        input.close();
+        return;
+      }
+      input.close();
+
+      OutputStream output;
+
+      output = new FileOutputStream(local);
+
+      if (!ftp.retrieveFile(remote, output)) {
+        error = true;
+        output.close();
+        return;
+      }
+      output.close();
+      if (lenient) {
+        FTPClientConfig config = new FTPClientConfig();
+        config.setLenientFutureDates(true);
+        ftp.configure(config);
+      }
+
+      for (FTPFile f : ftp.listFiles(remote)) {
+        System.out.println(f.getRawListing());
+        System.out.println(f.toFormattedString());
+      }
+      for (FTPFile f : ftp.mlistDir(remote)) {
+        System.out.println(f.getRawListing());
+        System.out.println(f.toFormattedString());
+      }
+      FTPFile f = ftp.mlistFile(remote);
+      if (f != null) {
+        System.out.println(f.toFormattedString());
+      }
+      String[] results = ftp.listNames(remote);
+      if (results != null) {
+        for (String s : ftp.listNames(remote)) {
+          System.out.println(s);
+        }
+      }
+      if (!ftp.deleteFile(remote)) {
+        error = true;
+        System.out.println("Failed delete");
+      }
+      // boolean feature check
+      if (ftp.features()) {
+        // Command listener has already printed the output
+      } else {
+        System.out.println("Failed: " + ftp.getReplyString());
+        error = true;
+      }
+
+      ftp.noop(); // check that control connection is working OK
+
+      if (stop) {
+        ftp.site("internalshutdown abcdef");
+      } else {
+        stop = true;
+      }
+
+    } catch (FTPConnectionClosedException e) {
+      error = true;
+      System.err.println("Server closed connection.");
+      e.printStackTrace();
+    } catch (IOException e) {
+      error = true;
+      e.printStackTrace();
+    } finally {
+      if (ftp.getDataConnectionMode() ==
+          FTPClient.ACTIVE_LOCAL_DATA_CONNECTION_MODE) {
+        try {
+          ftp.disconnect();
+        } catch (IOException f) {
+          // do nothing
+        }
+      }
+      assertFalse("Error occurs", error);
+    }
+  }
+
+  @Test
+  public void testFtpApacheClientPassive() throws IOException {
+    File localFilename = new File("/tmp/ftpfile.bin");
+    FileWriter fileWriterBig = new FileWriter(localFilename);
+    for (int i = 0; i < 100; i++) {
+      fileWriterBig.write("0123456789");
+    }
+    fileWriterBig.flush();
+    fileWriterBig.close();
+    logger.warn("Passive");
+    launchFtpClient("127.0.0.1", 2022, "fredo", "fred1", "a", false,
+                    localFilename.getAbsolutePath(), localFilename.getName());
+    logger.warn("End Passive");
+    try {
+      Thread.sleep(1000);
+    } catch (InterruptedException e) {
+      // ignore
+    }
   }
 }

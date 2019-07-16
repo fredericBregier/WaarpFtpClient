@@ -20,7 +20,11 @@
 
 package org.waarp.ftp.client.transaction;
 
+import org.waarp.common.logging.WaarpLogger;
+import org.waarp.common.logging.WaarpLoggerFactory;
 import org.waarp.ftp.client.WaarpFtp4jClient;
+
+import java.io.File;
 
 /**
  * FTP Client using FTP4J with the test scenario
@@ -28,6 +32,12 @@ import org.waarp.ftp.client.WaarpFtp4jClient;
  * @author frederic
  */
 public class Ftp4JClientTransactionTest extends WaarpFtp4jClient {
+  /**
+   * Internal Logger
+   */
+  protected static WaarpLogger
+      logger = WaarpLoggerFactory.getLogger(Ftp4JClientTransactionTest.class);
+
   /**
    * @param server
    * @param port
@@ -38,6 +48,8 @@ public class Ftp4JClientTransactionTest extends WaarpFtp4jClient {
   public Ftp4JClientTransactionTest(String server, int port, String username,
                                     String passwd, String account, int isSsl) {
     super(server, port, username, passwd, account, false, isSsl, 0, 10000);
+    File dir = new File("/tmp/GGFTP/" + username + "/" + account);
+    dir.mkdirs();
   }
 
   /**
@@ -51,14 +63,14 @@ public class Ftp4JClientTransactionTest extends WaarpFtp4jClient {
    */
   public boolean transferFile(String local, String remote, boolean store) {
     boolean status = super.transferFile(local, remote, store? 1 : 0);
-    /*
-     * if (status) { String [] results = this.executeSiteCommand("XCRC "+remote); for (String
-     * string : results) { System.err.println("XCRC: "+string); } results =
-     * this.executeSiteCommand("XMD5 "+remote); for (String string : results) {
-     * System.err.println("XMD5: "+string); } results =
-     * this.executeSiteCommand("XSHA1 "+remote); for (String string : results) {
-     * System.err.println("XSHA1: "+string); } }
-     */
+    logger.info("Transfer {} to {} using {} is {}", local, remote,
+                store? "STOR" : "RETR", status);
+    return status;
+  }
+
+  public boolean deleteFile(String remote) {
+    boolean status = super.deleteFile(remote);
+    logger.info("Delete {} is {}", remote, status);
     return status;
   }
 }
