@@ -2,8 +2,8 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>WaarpFtpClient</artifactId>
-	<name>Ftp R66 client </name>
-	<version>3.0.7</version>
+	<name>Waarp Ftp R66 client </name>
+	<version>3.1.0</version>
 	<description>FTP client -wrapper of ftp4j- for Waarp solution</description>
 	<url>http://waarp.github.com/WaarpFtpClient</url>
 	<inceptionYear>2009</inceptionYear>
@@ -44,7 +44,7 @@
 		<dependency>
 			<groupId>Waarp</groupId>
 			<artifactId>WaarpCommon</artifactId>
-			<version>3.1.0</version>
+			<version>3.1.1</version>
 		</dependency>
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
@@ -61,7 +61,7 @@
 		<dependency>
 			<groupId>Waarp</groupId>
 			<artifactId>WaarpFtp-Core</artifactId>
-			<version>3.0.8</version>
+			<version>3.1.0</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-net</groupId>
@@ -72,13 +72,19 @@
 		<dependency>
 			<groupId>Waarp</groupId>
 			<artifactId>WaarpFtp-Simpleimpl</artifactId>
-			<version>3.0.8</version>
+			<version>3.1.0</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>it.sauronsoftware</groupId>
 			<artifactId>ftp4j</artifactId>
 			<version>1.7.2</version>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.12</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 	<properties>
@@ -107,7 +113,8 @@
 					<source>1.6</source>
 					<target>1.6</target>
 					<optimize>true</optimize>
-					<showDeprecations>true</showDeprecations>
+					<showDeprecation
+          >true</showDeprecation>
 				  </configuration>
 			</plugin>
 			<plugin>

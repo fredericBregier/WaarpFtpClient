@@ -546,6 +546,35 @@ public class WaarpFtp4jClient {
     }
 
     /**
+     * @param remote
+     *
+     * @return True if deleted
+     */
+    public boolean deleteFile(String remote) {
+        try {
+            logger.debug("DELE {}", remote);
+            ftpClient.deleteFile(remote);
+            return true;
+        } catch (IOException e) {
+            result = "Cannot execute operation Site";
+            logger.error(result, e);
+            return false;
+        } catch (IllegalStateException e) {
+            result = "Cannot execute operation Site";
+            logger.error(result, e);
+            return false;
+        } catch (FTPIllegalReplyException e) {
+            result = "Cannot execute operation Site";
+            logger.error(result, e);
+            return false;
+        } catch (FTPException e) {
+            result = "Cannot execute operation Site";
+            logger.error(result, e);
+            return false;
+        }
+    }
+
+    /**
      * 
      * @param params
      * @return the string lines result for the command params
